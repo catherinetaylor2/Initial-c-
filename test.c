@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+//skdl;kekflk;lfklk;
 typedef struct LinkedList{
     int value;
     struct LinkedList *nextNode;
