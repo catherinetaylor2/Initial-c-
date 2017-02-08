@@ -2,5 +2,11 @@
 using namespace std;
 
 int main(){
-cout<<"Hello World "<< '\n';    
+    int x;
+
+cout<<"Hello World "<< '\n';  
+cout <<"Enter a number "<<'\n';
+cin>>x;
+cout <<"Number doubled is "<< 2*x << '\n';
+return 0;
 }
