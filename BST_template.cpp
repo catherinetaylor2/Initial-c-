@@ -30,9 +30,9 @@ void fill_bst(int list[], int length, bst_t *root_node){
     for (int i=1; i<length; i++){ 
         bst_t *h = new bst_t; 
         root_node->right = h;           
-            h ->val = list[i];
-            root_node->left = nullptr;
-            root_node = h;
+        h ->val = list[i];
+        root_node->left = nullptr;
+        root_node = h;
     }
     //delete root_node->right;
     root_node->right = nullptr;
@@ -50,26 +50,65 @@ void print_bst(bst_t *node){
     }
 }
 
-
-
 void balance_bst(bst_t *root_node, int length){
+    int list_centre;
+    list_centre = floor((length-1)/2);
+    std::cout<<"list centre "<<list_centre <<"\n";
+    bst_t *root = root_node;
+    bst_t*h=root_node;
+    std::cout<<"h val "<<h->val<<"\n";
+    bst_t*g=root_node;
+    for (int i=0; i<list_centre; i++){
+        root=root->right;
+    }
+    bst_t*current = root;
+    for(int i=list_centre; i>0;i--){
+        for(int j = 0; j<i-1;j++){
+            h=h->right;
+            std::cout<<"what is h? "<<h->val<<"\n";
+        }
+       current->left = h;
+      // current->right=nullptr;
+       //current->left->val=h->val;
+       current=h;
+       std::cout<<"val "<<current->val<<"\n";
+    }
+   // current->left=nullptr;
+   // current->right=nullptr;
+    current = root;
+    for(int i=0;i>(length - list_centre); i++){
+        for(int j = 0; j<i+list_centre+1;j++){
+            g=g->right;
+        }
+       current->right = g;
+      // current->left=nullptr;
+       current=g;
+
+    }
+  //  current->right=nullptr;
+  //  current->left=nullptr;
+     current = root;
+     std::cout<<"Root node "<<root->val<<"\n";
+     std::cout<<"Root left "<<current->left->val<<"\n";
+     std::cout<<"Root right "<<root->right->val<<"\n";
+
 }
 
 int main(int argc, char* argv[]){
 
     bst_t * root = new bst_t;
-    int arrayList[] = {1,2,3,5,6,7,9};
+    int arrayList[] = {1,2,3};
     if(assert_sorted_list(arrayList,__ARRAYLEN(arrayList))<0){
         return -1;
     }
 
     fill_bst(arrayList,__ARRAYLEN(arrayList),root); 
-    std::cout<<"List Created using fill_bst \n";
+    std::cout<<"List Created using fill_bst: \n";
     print_bst(root);
    
-    //balance_bst(root,__ARRAYLEN(arrayList));
- 
-
+    balance_bst(root,__ARRAYLEN(arrayList));
+ std::cout<<"Balanced tree: \n";
+//print_bst(root);
     // Manually create a BSP tree
     bst_t *root1 = new bst_t;
     bst_t *root2 = new bst_t;
@@ -112,7 +151,7 @@ int main(int argc, char* argv[]){
     root10->right=nullptr;
     root10->val=10;
 
-std::cout<<"List Created Manually \n";
-print_bst(root5);
+    std::cout<<"List Created Manually: \n";
+    print_bst(root5);
     return 1;
 }
