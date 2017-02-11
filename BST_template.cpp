@@ -34,7 +34,7 @@ void fill_bst(int list[], int length, bst_t *root_node){
             root_node->left = nullptr;
             root_node = h;
     }
-    delete root_node->right;
+    //delete root_node->right;
     root_node->right = nullptr;
     root_node->left=nullptr;
     root_node=current;
@@ -63,19 +63,15 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
- fill_bst(arrayList,__ARRAYLEN(arrayList),root); 
-
-    std::cout<<"left"<<root->left<<"\n";
-    std::cout<<"right"<<root->right<<"\n";
-
+    fill_bst(arrayList,__ARRAYLEN(arrayList),root); 
+    std::cout<<"List Created using fill_bst \n";
+    print_bst(root);
    
     //balance_bst(root,__ARRAYLEN(arrayList));
-    // print_bst(root);
+ 
 
-     // Manually create a BSP tree
+    // Manually create a BSP tree
     bst_t *root1 = new bst_t;
-  // std::cout<<"root 1 location "<<&root1<<"\n";
-
     bst_t *root2 = new bst_t;
     bst_t *root3 = new bst_t;
     bst_t *root4 = new bst_t;
@@ -85,14 +81,9 @@ int main(int argc, char* argv[]){
     bst_t *root8 = new bst_t;
     bst_t *root9 = new bst_t;
     bst_t *root10 = new bst_t;
-
-// std::cout<<"root 1 location "<<root1<<"\n";
     root5->val =5;
-
-
     root5->left=root3;
     root3->val=3;
-    std::cout<<"root5 value "<<root5->val<<"\n";
     root3->left = root2;
     root2->val = 2;
     root2->left = root1;
@@ -121,6 +112,7 @@ int main(int argc, char* argv[]){
     root10->right=nullptr;
     root10->val=10;
 
-print_bst(root);
+std::cout<<"List Created Manually \n";
+print_bst(root5);
     return 1;
 }
