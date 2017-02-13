@@ -52,119 +52,78 @@ void print_bst(bst_t *node){
 
 void balance_bst(bst_t *root_node, int length){
     int list_centre;
-    list_centre = floor((length+1)/2); 
-    bst_t *current=root_node;
-    //bst_t*h=root_node;
-    for (int i=1; i<list_centre;i++){
-        root_node=root_node->right;
+    list_centre = floor((length+1)/2);
+    std::cout<<"list centre "<<list_centre<<"\n";
+    bst_t *root= root_node;
+    bst_t*h=root_node;
+    for (int i=1; i<list_centre; i++){
+        root=root->right;
+    }   
+    bst_t *balanced = new bst_t;
+    bst_t*current=balanced;
+    current->val = root->val;  
+
+    for(int j = 1; j<list_centre-1;j++){
+            h=h->right;
     }
-  bst_t*root=root_node;
-  bst_t*h=current;
-   for(int i=1; i < list_centre-1;i++){
-      h=h->right;
-  }
-  root_node->left=h;
-  root_node=h;
-  for(int i = list_centre -1;i>0;i--){
-      h = current;
-      for(int j = 1; j<i;j++){
-          h=h->right;
-      }
-      root_node->left=h;
-      root_node->right=nullptr;
-      root_node=h;
-  }
-  root_node->left=nullptr;
-  root_node->right=nullptr;
-  root_node=root;
+        bst_t*hh = new bst_t;
+        hh->val = h->val;
+        current->left = hh;
+        current=hh;
+        
+    for(int i=list_centre-2; i>0;i--){
+        bst_t *h=root_node;
+        for(int j = 1; j<i;j++){
+            h=h->right;
+        }
+        bst_t*hh=new bst_t;
+        current->left = hh;
+        hh->val = h->val;
+        current->right = nullptr;  
+        current=hh;
+    }
+    current->left=nullptr;
+    current->right=nullptr;
+    current=balanced;
+    bst_t*g=root_node;
+    for(int j = 1; j<list_centre+1; j++){
+            g=g->right;
+    }
+    bst_t*gg=new bst_t;
+    gg->val = g->val;
+    current->right = gg;
+    current=gg;    
+    for(int i=1; i<(length - list_centre); i++){
+        bst_t*g=root_node;        
+        for(int j = 1; j<(i+list_centre+1); j++){
+            g=g->right;            
+        } 
+    bst_t*gg=new bst_t;
+    gg->val = g->val;
+    current->right = gg;
+    current->left=nullptr;
+    current=gg;
+    }
+   current->right=nullptr;
+   current->left=nullptr;
+   current = balanced;
 
-  h=current;
-  std::cout<<"h val "<<current->right->val<<"\n";
-    std::cout<<"root node "<<root_node->val<<"\n";
-  std::cout<<"root node "<<root_node->left->val<<"\n";
-  std::cout<<"root node "<<root_node->left->left->val<<"\n";
-for(int i=1; i<list_centre+1;i++){
-    h=h->right;
-}
+int length_r = list_centre -1;
+int length_l = length - list_centre;
 
-
-}
-// void balance_bst(bst_t *root_node, int length){
-//     std::cout<<"what is rootnode val "<<root_node->right->val<<"\n";
-//     int list_centre;
-//     list_centre = floor((length+1)/2);
-//     std::cout<<"list centre "<<list_centre <<"\n";
-//     bst_t *root= root_node;
-//     bst_t*h=root_node;
-//     std::cout<<"h right"<<h->right->val<<"\n";
-// std::cout<<"what is rootnode val "<<root_node->right<<"\n";
-
-//     for (int i=1; i<list_centre; i++){
-//         root=root->right;
-//     }
-//     std::cout<<"root val "<<root->val<<"\n";
-//     bst_t *current = new bst_t;
-//     current=root
-//     ;
-
-//     for(int j = 1; j<list_centre-1;j++){
-//             h=h->right;
-//             std::cout<<"what is h? "<<h->val<<"\n";
-//         }
-//     current->left = h;
-//     current=h;
-//     std::cout<<"what is rootnode val "<<root_node->right<<"\n";
-
-//     for(int i=list_centre-2; i>0;i--){
-//         bst_t *hh=h;
-//         for(int j = 1; j<i;j++){
-//             hh=hh->right;
-//         }
-//     current->left = hh;
-//     current->right = nullptr;
-//     current=hh;
-//     }
-//     current->left=nullptr;
-//     current->right=nullptr;
-//     current = root;
-
-
-//     bst_t*g=root_node;
-//     std::cout<<"g right"<<g->right->right->val<<"\n";
-
-// for(int j = 1; j<list_centre+1; j++){
-//             g=g->right;
-//             std::cout<<"what is g val "<<g->val<<"\n";
-
-//         }
-//        current->right = g;
-//        current=g;
-// std::cout<<"g val "<<g->val<<"\n";
-    
-//     for(int i=0;i>(length - list_centre); i++){
-//         bst_t*g=root_node;
-//         for(int j = 0; j<(i+list_centre+1); j++){
-//             g=g->right;
-//         }
-//        current->right = g;
-//        current->left=nullptr;
-//        current=g;
-
-//     }
-//    current->right=nullptr;
-//    current->left=nullptr;
-//      current = root;
-//      std::cout<<"Root node "<<root->val<<"\n";
-//      std::cout<<"Root left "<<current->left->val<<"\n";
-//      std::cout<<"Root left left "<<current->left->left->val<<"\n";
-//      std::cout<<"Root right "<<root->right->val<<"\n";
-
-// }
+if(length_r>2){
+    balance_bst(current, length_r);
+}   
+    std::cout<<"Root node "<<current->val<<"\n";
+    std::cout<<"Root left "<<current->left->right->val<<"\n";
+    // std::cout<<"Root left left "<<current->left->left->val<<"\n";
+    // std::cout<<"Root right "<<root->right->right->val<<"\n";
+ }
 
 int main(int argc, char* argv[]){
 
     bst_t * root = new bst_t;
-    int arrayList[] = {1,2,3,4,5};
+    int arrayList[] = {1,2,3,4,5,6,7};
     if(assert_sorted_list(arrayList,__ARRAYLEN(arrayList))<0){
         return -1;
     }
@@ -175,7 +134,7 @@ int main(int argc, char* argv[]){
    std::cout<<"balanced stuff \n";
     balance_bst(root,__ARRAYLEN(arrayList));
  std::cout<<"Balanced tree: \n";
-//print_bst(root);
+print_bst(root);
     // Manually create a BSP tree
     bst_t *root1 = new bst_t;
     bst_t *root2 = new bst_t;
