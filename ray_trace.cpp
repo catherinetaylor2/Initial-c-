@@ -100,7 +100,8 @@ int main(){
     vector3 lookat(0,0,1);
     vector3 light(4,10,-1);
     vector3 centre(0,0,0);
-    float d = 3, I1=0.25, am = 0.5, I2=0.2, n=20;
+    float d = 3, I1=0.25, am = 0.5, n=24;
+    double I2=0.00000002;
     scene myscene(1000,1000,5);
     
 //set up eye coord system
@@ -121,28 +122,23 @@ w.normalize();
   Lz = C.get_z()+u.get_z()*myscene.get_width()/2+v.get_z()*myscene.get_height()/2;
  
    vector3 L(Lx,Ly,Lz);
-  cout<<"Lx"<<L.get_x()<<"\n";
-cout<<"Ly"<<L.get_y()<<"\n";
-cout<<"Lz"<<L.get_z()<<"\n";
+  
 unsigned char *img = new unsigned char[3*myscene.get_x_res()*myscene.get_y_res()];
 unsigned char*img2 = new unsigned char[myscene.get_x_res()*myscene.get_y_res()];
 cout<<myscene.get_x_res()<<"\n";
 
 for (int x = 0; x<3*myscene.get_x_res()*myscene.get_y_res(); x+=3){
     int i, j;
-    i=(x/(3))%(myscene.get_y_res());
-    j=(x/(3))/(myscene.get_y_res());
-    // float sx, sy,sz;
-    //   float rat1, rat2;
-    //   rat1 = (myscene.get_width())/(myscene.get_x_res());
-    //   rat2 = (myscene.get_height())/(myscene.get_y_res());
-    //     sx = L.get_x() - u.get_x()*rat1*i - v.get_x()*rat2*j;
-    //     sy = L.get_y() - u.get_y()*rat1*i - v.get_y()*rat2*j;
-    //     sz = L.get_z() - u.get_z()*rat1*i - v.get_z()*rat2*j;
+    i=(x/(3))%(myscene.get_y_res())+1;
+    j=(x/(3))/(myscene.get_y_res())+1;
+    
+    // cout<<"i "<<i<<"\n";
+    // cout<<"j "<<j<<"\n";    
       float sx, sy,sz;
         sx = L.get_x() - u.get_x()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_x()*(myscene.get_height())/(myscene.get_y_res())*j;
         sy = L.get_y() - u.get_y()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_y()*(myscene.get_height())/(myscene.get_y_res())*j;
         sz = L.get_z() - u.get_z()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_z()*(myscene.get_height())/(myscene.get_y_res())*j;
+       // cout<<"sx "<<sx<<"\n";
  vector3 s(sx,sy,sz);
  vector3 d(s.get_x()-eye.get_x(),s.get_y()-eye.get_y(),s.get_z()-eye.get_z());
         d.normalize();
@@ -170,7 +166,7 @@ if (det >= 0){
     vector3 l = vec_add(light, vec_scal_mult(-1, point));
     l.normalize();
  
-   float D,DD;
+   double D,DD;
     if (dotproduct(normal,l)>0){
         D = dotproduct(normal,l);
     }
@@ -184,10 +180,11 @@ if (det >= 0){
          }
          else{
              DD=dotproduct(normal,H);
+             //cout<<"DD"<<DD<<"\n";
                   }
-    img[x] = 255*I1*D+255*am;
-    img[x+1]=0;
-img[x+2]=0;
+    img[x] = 255*I1*D+255*am+255*pow(DD,n)*I2;
+    img[x+1]=255*pow(DD,n)*I2;
+img[x+2]=255*pow(DD,n)*I2;
     
 }
 else{
