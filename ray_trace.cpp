@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define PI 3.141592654f
+
 sphere::sphere(int sphere_x, int sphere_y, int sphere_z, int sphere_radius, int sphere_colour){
     centre_x=sphere_x;
     centre_y=sphere_y;
@@ -62,7 +64,7 @@ vector3 vec_scal_mult(int c, vector3 v){
 }
 void vector3::normalize(void){
     float sum = sqrt(x_val*x_val + y_val*y_val + z_val*z_val);
-    x_val /= sum;
+    x_val/= sum;
     y_val /= sum;
     z_val /=sum;
 }
@@ -71,11 +73,11 @@ void vector3::setValue(int x, int y, int z){
     y_val=y;
     z_val=z;
 }
-scene::scene(int x, int y, int w){
+scene::scene(int x, int y, int fov, int d){
     x_res = x;
     y_res= y;
-    width =w;
-    height = x/y*w;
+       height = 2*d*tan((float)fov/360.0f *PI/2.0f );
+        width = ((float)x/(float)y)*height;
 }
 
 int scene::get_x_res(void){
@@ -84,10 +86,10 @@ int scene::get_x_res(void){
 int scene::get_y_res(void){
     return y_res;
 }
-int scene::get_width(void){
+float scene::get_width(void){
     return width;
 }
-int scene::get_height(void){
+float scene::get_height(void){
     return height;
 }
 
@@ -98,11 +100,10 @@ int main(){
     vector3 eye(0,0,-5);
     vector3 lookup(0,1,-5);
     vector3 lookat(0,0,1);
-    vector3 light(4,10,-1);
+    vector3 light(4,3,-5);
     vector3 centre(0,0,0);
-    float d = 3, I1=0.25, am = 0.5, n=24;
-    double I2=0.00000002;
-    scene myscene(1000,1000,5);
+    float d = 3, DiffuseCoeff=0.6, AmbientCoeff = 0.1, n=600,  SpecularCoeff=0.7;
+    scene myscene(1000,1000,90,3);
     
 //set up eye coord system
 
@@ -124,21 +125,25 @@ w.normalize();
    vector3 L(Lx,Ly,Lz);
   
 unsigned char *img = new unsigned char[3*myscene.get_x_res()*myscene.get_y_res()];
-unsigned char*img2 = new unsigned char[myscene.get_x_res()*myscene.get_y_res()];
+unsigned char *img2 = new unsigned char[myscene.get_x_res()*myscene.get_y_res()];
 cout<<myscene.get_x_res()<<"\n";
 
 for (int x = 0; x<3*myscene.get_x_res()*myscene.get_y_res(); x+=3){
     int i, j;
-    i=(x/(3))%(myscene.get_y_res())+1;
-    j=(x/(3))/(myscene.get_y_res())+1;
+    i=(x/(3))%(myscene.get_x_res());
+    j=(x/(3))/(myscene.get_x_res());
+   
     
-    // cout<<"i "<<i<<"\n";
+    // cout<<"i "<<i<<" ";
     // cout<<"j "<<j<<"\n";    
       float sx, sy,sz;
-        sx = L.get_x() - u.get_x()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_x()*(myscene.get_height())/(myscene.get_y_res())*j;
-        sy = L.get_y() - u.get_y()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_y()*(myscene.get_height())/(myscene.get_y_res())*j;
-        sz = L.get_z() - u.get_z()*(myscene.get_width())/(myscene.get_x_res())*i - v.get_z()*(myscene.get_height())/(myscene.get_y_res())*j;
-       // cout<<"sx "<<sx<<"\n";
+        sx = L.get_x() - u.get_x()*(myscene.get_width())/((float)myscene.get_x_res())*i - v.get_x()*(myscene.get_height())/((float)myscene.get_y_res())*j;
+        sy = L.get_y() - u.get_y()*(myscene.get_width())/((float)myscene.get_x_res())*i - v.get_y()*(myscene.get_height())/((float)myscene.get_y_res())*j;
+        sz = L.get_z()- u.get_z()*(myscene.get_width())/((float)myscene.get_x_res())*i - v.get_z()*(myscene.get_height())/((float)myscene.get_y_res())*j;
+        // cout<<"sx "<<sx<<" ";
+        // cout<<"sy "<<sy<<" ";
+        // cout<<"sz "<<sz<<"\n";
+
  vector3 s(sx,sy,sz);
  vector3 d(s.get_x()-eye.get_x(),s.get_y()-eye.get_y(),s.get_z()-eye.get_z());
         d.normalize();
@@ -151,7 +156,7 @@ float a,b,c, det ;
 det = b*b - 4*a*c;
 if (det >= 0){
      
-    int t, t1,t2;
+    float t, t1,t2;
     t1 = (-1*b -sqrt(det))/(2*a);
      t2 = (-1*b +sqrt(det))/(2*a);
      if(t1>t2){
@@ -160,31 +165,66 @@ if (det >= 0){
      else{
          t=t1;
      }
+     
     vector3 point = vec_add(eye, vec_scal_mult(t,d)); 
+  
     vector3 norm = vec_add(point, vec_scal_mult(-1,centre));
     vector3 normal = vec_scal_mult(2,norm);
-    vector3 l = vec_add(light, vec_scal_mult(-1, point));
-    l.normalize();
- 
+    normal.normalize();
+     
+  
+   
+
+  vector3 l = vec_add(light, vec_scal_mult(-1,point));
+        l.normalize();
+        
+
    double D,DD;
     if (dotproduct(normal,l)>0){
         D = dotproduct(normal,l);
-    }
+        }
     else{
         D=0;
     }
      vector3 H =vec_add(l, vec_scal_mult(-1,d));
          H.normalize();
-         if (dotproduct(normal,H)<0){
+    // float r = 2*dotproduct(l, normal);
+
+    // vector3 R = vec_add(vec_scal_mult(r, normal), vec_scal_mult(-1, l));
+    // R.normalize();
+
+    //cout<<"pointz "<<point.get_z()<<"\n";
+    // vector3 V = vec_scal_mult(-1,d);
+    // V.normalize();
+    // cout<<"Vx "<<V.get_x()<<" ";
+    // cout<<"Vy "<<V.get_y()<<" ";
+    // cout<<"Vz "<<V.get_z()<<"\n";
+         if (dotproduct(normal, H)<0){
              DD=0;
          }
          else{
-             DD=dotproduct(normal,H);
-             //cout<<"DD"<<DD<<"\n";
+             DD=dotproduct(normal, H);
+        // cout<<"DD "<<DD<<"\n";
                   }
-    img[x] = 255*I1*D+255*am+255*pow(DD,n)*I2;
-    img[x+1]=255*pow(DD,n)*I2;
-img[x+2]=255*pow(DD,n)*I2;
+  
+
+    double Red_term, Green_term, Blue_term;
+    Red_term = 255*DiffuseCoeff*D+255*AmbientCoeff+255*pow(DD,n)*SpecularCoeff;
+    Blue_term =255*pow(DD,n)*SpecularCoeff;
+    Green_term =255*pow(DD,n)*SpecularCoeff;
+    //cout<<"red "<<Red_term<<"\n";
+    if (Red_term > 255){
+        Red_term =255;
+    }
+    if (Blue_term>255){
+        Blue_term=255;
+    }
+    if (Green_term >255){
+        Green_term = 255;
+    }
+    img[x] = Red_term;
+    img[x+1]=Green_term;
+    img[x+2]=Blue_term;
     
 }
 else{
@@ -193,10 +233,7 @@ else{
 img[x+2]=0;
  
 }
-
-    }
-
-
+}
 
     ofstream my_image;
     my_image.open("test.ppm", ios::out| ios::binary);
@@ -204,9 +241,10 @@ img[x+2]=0;
     <<myscene.get_x_res()<<" "
     <<myscene.get_y_res()<<"\n"
     <<255<<"\n";
-for (int i=0; i<3*myscene.get_x_res()*myscene.get_y_res(); i++){
-    my_image << img[i];
-}
+    for (int i=0; i<3*myscene.get_x_res()*myscene.get_y_res(); i++){
+        my_image << img[i];
+        
+    }
     my_image.close();
 
 
