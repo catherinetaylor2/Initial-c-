@@ -9,8 +9,8 @@ using namespace std;
 
 #define PI 3.141592654f
 const int RED[] = {255,0,0};
-const int BLUE[] ={0,255,0};
-const int GREEN[] = {0,0,255};
+const int GREEN[] ={0,255,0};
+const int BLUE[] = {0,0,255};
 
 vector3::vector3(float x, float y, float z){
     x_val=x;
@@ -131,6 +131,26 @@ float Sphere_ray_intersection(int radius, vector3 centre, vector3 ray_point, vec
     }
     return 0;
  }
+ double DiffuseValue( vector3 normal, vector3 light_direction){
+    if (dotproduct(normal,light_direction)>0){
+        
+        return dotproduct(normal,light_direction);
+
+    }
+    else{
+        return 0;
+    }
+}
+double SpecularValue(vector3 normal, vector3 light_direction, vector3 ray_direction){
+      vector3 H =vec_add(light_direction, vec_scal_mult(-1,ray_direction));
+            H.normalize();
+            if (dotproduct(normal, H)<0){
+                return 0;
+            }
+            else{
+                return dotproduct(normal, H);
+            }   
+}
 
 int main(){
 
@@ -159,7 +179,7 @@ int main(){
   
     unsigned char *img = new unsigned char[3*myscene.get_x_res()*myscene.get_y_res()];
     float sx, sy,sz;
-    double D,DD,Red_term, Green_term, Blue_term;
+    double D, DD, Red_term, Green_term, Blue_term;
     for (int x = 0; x<3*myscene.get_x_res()*myscene.get_y_res(); x+=3){
         int i, j;
         i=(x/(3))%(myscene.get_x_res());
@@ -176,32 +196,32 @@ int main(){
             vector3 point = vec_add(eye, vec_scal_mult(t,d)); 
             vector3 normal=sphere1.find_normal(point);   
             vector3 l = vec_add(light, vec_scal_mult(-1,point));
-            l.normalize();    
-            if (dotproduct(normal,l)>0){
-                D = dotproduct(normal,l);
-            }
-            else{
-                D=0;
-            }
-            vector3 H =vec_add(l, vec_scal_mult(-1,d));
-            H.normalize();
-            if (dotproduct(normal, H)<0){
-                DD=0;
-            }
-            else{
-                DD=dotproduct(normal, H);
-            }   
+            l.normalize();   
+          D = DiffuseValue(normal, l);
+            DD = SpecularValue(normal,l,d);
             Red_term = (DiffuseCoeff*D+AmbientCoeff)*(sphere1.get_colour()).get_x()+pow(DD,n)*SpecularCoeff;
-            Blue_term =(DiffuseCoeff*D+AmbientCoeff)*(sphere1.get_colour()).get_y()+pow(DD,n)*SpecularCoeff;
-            Green_term =(DiffuseCoeff*D+AmbientCoeff)*(sphere1.get_colour()).get_z()+pow(DD,n)*SpecularCoeff;
+            Green_term =(DiffuseCoeff*D+AmbientCoeff)*(sphere1.get_colour()).get_y()+pow(DD,n)*SpecularCoeff;
+            Blue_term =(DiffuseCoeff*D+AmbientCoeff)*(sphere1.get_colour()).get_z()+pow(DD,n)*SpecularCoeff;
             if (Red_term > 255){
                 Red_term =255;
+            }
+            if(Red_term < 0){
+                cout<<"This should never happen \n";
+                break;
             }
             if (Blue_term>255){
                 Blue_term=255;
             }
+            if(Blue_term < 0){
+                cout<<"This should never happen \n";
+                break;
+            }
             if (Green_term >255){
                 Green_term = 255;
+            }
+             if(Green_term < 0){
+                cout<<"This should never happen \n";
+                break;
             }
             img[x] = Red_term;
             img[x+1]=Green_term;

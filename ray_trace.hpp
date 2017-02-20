@@ -24,23 +24,20 @@ class sphere{
         int get_y_coord(void);
         int get_z_coord(void);
         int get_radius(void);
-       int get_centre_x(void);
-       int get_centre_y(void);
-       int get_centre_z(void);
-       vector3 get_colour(void);
-       vector3 find_normal(vector3 point);
+        int get_centre_x(void);
+        int get_centre_y(void);
+        int get_centre_z(void);
+        vector3 get_colour(void);
+        vector3 find_normal(vector3 point);
     private:
         int centre_x;
         int centre_y;
         int centre_z;
-        int radius;;
+        int radius;
         int colour_x;
         int colour_y;
         int colour_z;
 };
-
-
-
 class scene{
     public:
     scene(int x, int y, int fov, int d);
@@ -53,9 +50,5 @@ class scene{
         int y_res;
         float width;
         float height;
-};
-class Colour{
-    public:
-    private:
 };
 #endif
