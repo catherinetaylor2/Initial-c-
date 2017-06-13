@@ -131,10 +131,10 @@ int main(int argc, char* argv[]){
     fill_bst(arrayList,__ARRAYLEN(arrayList),root); 
     std::cout<<"List Created using fill_bst: \n";
     //print_bst(root);
-   std::cout<<"balanced stuff \n";
+    std::cout<<"balanced stuff \n";
     balance_bst(root,__ARRAYLEN(arrayList));
- std::cout<<"Balanced tree: \n";
-print_bst(root);
+    std::cout<<"Balanced tree: \n";
+    print_bst(root);
     // Manually create a BSP tree
     bst_t *root1 = new bst_t;
     bst_t *root2 = new bst_t;
