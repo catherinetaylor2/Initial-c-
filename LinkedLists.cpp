@@ -70,7 +70,6 @@ int partition(int* array, int low, int high){
 void quick_sort_array(int* array, int low, int high){
     if(low<high){
        int p = partition(array, low, high);
-       std::cout<<"p "<<p<<"\n";
         quick_sort_array(array, low, p-1);
         quick_sort_array(array, p+1, high);
     }
@@ -82,17 +81,32 @@ void print_array(int* array, int array_length){
     }
     std::cout<<"\n";
 }
+void print_list(List*list){
+    List*current = list;
+    std::cout<<"list: ";
+    while(list!=nullptr){
+        std::cout<<list->value<<" ";
+        list = list->next;
+    }
+    list = current;
+    std::cout<<"\n";
+}
 int main(){
-    int array[] = {1,2,3,4};
-    quick_sort_array(array, 0, 3);
-    print_array(array,4);
-    List* mylist = new List;
-    fill_list(array, mylist, 4);
-    add_element_start(5, &mylist);
-    add_element_end(6, mylist);
-    reverse_list(&mylist);
-    std::cout<<"linked list "<<mylist->next->value<<"\n";
+    int array[] = {7,2,5,4,1,2,3};
 
+    quick_sort_array(array, 0, 6);
+    print_array(array,7);
+
+    List* mylist = new List;
+
+    fill_list(array, mylist, 7);
+    print_list(mylist);
+    add_element_start(5, &mylist);
+    print_list(mylist);
+    add_element_end(6, mylist);
+    print_list(mylist);
+    reverse_list(&mylist);
+    print_list(mylist);
 
     return 0;
 }
