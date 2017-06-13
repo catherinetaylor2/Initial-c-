@@ -1,6 +1,6 @@
 //Linked Lists
 
-#include <iostream>;
+#include <iostream>
 
 typedef struct LinkedList{
     int value;
@@ -49,8 +49,43 @@ void reverse_list(List** list){
     }
     *list = prev;
 }
+int partition(int* array, int low, int high){
+    int pivot = array[high];
+    int i = low -1;
+    for(int j = low; j<high; j++){
+        if ((array)[j]<=pivot){
+            i+=1;
+            if (i != j){
+                int temp = (array)[i];
+                (array)[i] = (array)[j];
+                (array)[j]=temp;
+            }
+        } 
+    }
+    int temp = (array)[i+1];
+    (array)[i+1] = pivot;
+    (array)[high]=temp;
+    return i+1;
+}
+void quick_sort_array(int* array, int low, int high){
+    if(low<high){
+       int p = partition(array, low, high);
+       std::cout<<"p "<<p<<"\n";
+        quick_sort_array(array, low, p-1);
+        quick_sort_array(array, p+1, high);
+    }
+}
+void print_array(int* array, int array_length){
+    std::cout<<"array: ";
+    for (int i=0; i<array_length;i++){
+        std::cout<<array[i]<<" ";
+    }
+    std::cout<<"\n";
+}
 int main(){
-    int array[]= {1,2,3,4};
+    int array[] = {1,2,3,4};
+    quick_sort_array(array, 0, 3);
+    print_array(array,4);
     List* mylist = new List;
     fill_list(array, mylist, 4);
     add_element_start(5, &mylist);
